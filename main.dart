@@ -82,18 +82,15 @@ class Character {
 }
 
 void main() {
-  // 플레이어 이름 입력
+  // 캐릭터 정보 초기화
   String pname2 = Character.Ename();
-
-  // characters.txt 파일에서 스탯 불러오기
   Character user;
   try {
     final file = File('characters.txt');
     List<String> lines = file.readAsLinesSync();
 
     if (lines.isNotEmpty) {
-      // 첫 번째 줄의 체력, 공격력, 방어력 읽기
-      List<String> parts = lines[0].split(','); // 첫 번째 줄만 읽음
+      List<String> parts = lines[0].split(',');
       if (parts.length == 3) {
         int health = int.parse(parts[0].trim());
         int attack = int.parse(parts[1].trim());
@@ -115,13 +112,26 @@ void main() {
   print(
       "캐릭터가 생성되었습니다: ${user.name2}, 체력: ${user.H2}, 공격력: ${user.A2}, 방어력: ${user.B2}");
 
-  // 몬스터 로직은 그대로 유지
-  List<Monster> listm = [
-    Monster("고블린", 50, 15, 5),
-    Monster("오크", 80, 20, 8),
-    Monster("트롤", 100, 25, 10)
-    // 필요한 몬스터 추가
-  ];
+  // 몬스터 리스트 초기화
+  List<Monster> listm = [];
+  try {
+    final file = File('monsters.txt');
+    List<String> lines = file.readAsLinesSync();
+
+    for (var line in lines) {
+      List<String> parts = line.split(',');
+      if (parts.length == 4) {
+        String name = parts[0].trim();
+        int health = int.parse(parts[1].trim());
+        int attack = int.parse(parts[2].trim());
+        int defense = int.parse(parts[3].trim());
+        listm.add(Monster(name, health, attack, defense));
+      }
+    }
+  } catch (e) {
+    print("monsters.txt 파일을 읽는 중 오류가 발생했습니다: $e");
+    return;
+  }
 
   while (listm.isNotEmpty && user.H2 > 0) {
     Monster m2 = listm[Random().nextInt(listm.length)];
